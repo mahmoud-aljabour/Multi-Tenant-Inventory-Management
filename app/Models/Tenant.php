@@ -24,5 +24,4 @@ class Tenant extends Model
     {
         return $this->hasMany(Product::class);
     }
-
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Product extends Model
 {
@@ -34,4 +35,12 @@ class Product extends Model
             return $product->quantity <= $product->low_stock_threshold;
         });
     }
-}
+
+protected static function booted()
+    {
+        static::addGlobalScope('tenant', function ($query) {
+            if (Auth::check()) {
+                $query->where('tenant_id', Auth::user()->tenant_id);
+            }
+        });
+    }}
