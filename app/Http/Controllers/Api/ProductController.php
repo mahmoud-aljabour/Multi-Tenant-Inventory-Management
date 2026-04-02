@@ -7,6 +7,7 @@ use App\Http\Requests\StoreMovementRequest;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Resources\InventoryMovementResource;
 use App\Http\Resources\ProductResource;
+use App\Jobs\LowStockNotificationJob;
 use App\Models\InventoryMovement;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -44,6 +45,7 @@ class ProductController extends Controller
                 'message' => 'الكمية غير كافية'
             ], 422);
         }
+
         // in
         $movement = InventoryMovement::create([
             ...$request->validated(),
@@ -51,7 +53,9 @@ class ProductController extends Controller
             'created_by' => Auth::id()
         ]);
 
-        // LowStockNotificationJob
+        if ($request->type === 'out') {
+            LowStockNotificationJob::dispatch($product->fresh());
+        }
 
         return response()->json([
             'message' => 'success',
