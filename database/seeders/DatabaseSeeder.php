@@ -18,9 +18,14 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
+        //    'name' => 'Mahmoud Maher',
+        //     'email' => 'manager@email.com',
+        //     'password' => Has::make('password'),
+        //     'tenant_id' => $tenant1->id
         // ]);
+        
         $this->call(RolesAndPermissionsSeeder::class);
+        $this->call(TenantSeeder::class);
+
     }
 }

@@ -14,7 +14,9 @@ class RolesAndPermissionsSeeder extends Seeder
      */
     public function run(): void
     {
+        setPermissionsTeamId(null);
         $view_products = Permission::create(['name' => 'view products']);
+        $create_products = Permission::create(['name' => 'create products']);
         $manage_inventory = Permission::create(['name' => 'manage inventory']);
         $manage_users = Permission::create(['name' => 'manage users']);
 
@@ -30,6 +32,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $manager = Role::create(['name' => 'warehouse_manager']);
         $manager->givePermissionTo([
             $view_products,
+            $create_products,
             $manage_inventory,
             $manage_users
         ]);
