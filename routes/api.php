@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
+Route::get('/db-check', function () {
+    return response()->json([
+        'actual_host' => config('database.connections.mysql.host'),
+        'env_host' => env('DB_HOST'),
+        'database' => config('database.connections.mysql.database'),
+        'app_env' => app()->environment(),
+    ]);
+});
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
