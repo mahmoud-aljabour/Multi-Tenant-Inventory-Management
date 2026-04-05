@@ -12,9 +12,7 @@ class TenantController extends Controller
 {
     public function store(StoreTenantRequest $request)
     {
-        $validatedData = $request->validate([
-            
-        ]);
+        $validatedData = $request->validated();
 
         $tenant = Tenant::create($validatedData);
 
