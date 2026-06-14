@@ -15,7 +15,7 @@ class InventoryMovement extends Model
         'type',
         'quantity',
         'note',
-        'created_by'
+        'created_by',
     ];
 
     public function product()

@@ -7,24 +7,18 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class AssignRoleRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        // return auth()->user()->can('manage users');
-        return true;
+        return $this->user()->can('assignRole', $this->route('user'));
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'role' => 'required|string|exists:roles,name'
+            'role' => 'required|string|exists:roles,name',
         ];
     }
 }

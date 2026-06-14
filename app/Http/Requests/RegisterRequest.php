@@ -25,8 +25,10 @@ class RegisterRequest extends FormRequest
         return [
             'name' => 'required|string|min:3|max:100',
             'email' => 'required|email|unique:users,email',
-            'tenant_id' => 'required|exists:tenants,id',
             'password' => 'required|string|min:8',
+            'tenant.name' => 'required|string|max:255',
+            'tenant.address' => 'required|string|max:255',
+            'tenant.description' => 'nullable|string',
         ];
     }
 }

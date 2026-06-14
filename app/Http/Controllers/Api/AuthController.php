@@ -6,57 +6,43 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
-use App\Models\User;
+use App\Services\AuthService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    public function __construct(private AuthService $authService) {}
+
     public function register(RegisterRequest $request)
     {
-        // return $request ;
-        $user = User::create($request->validated());
+        $user = $this->authService->register($request->validated());
 
-        return response()->json([
-            'status' => 'Success',
-            'message' => 'User Created Successfuly',
-            'data' => [
-                'user' => UserResource::make($user)
-            ],
-        ], 201);
+        return $this->createdResponse([
+            'user' => UserResource::make($user)->resolve(),
+        ], 'User created successfully.');
     }
 
     public function login(LoginRequest $request)
     {
-        // return $request;
-        $user = User::where('email', $request->email)->first();
+        $result = $this->authService->login(
+            $request->email,
+            $request->password
+        );
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'status' => 'Error',
-                'message' => 'Incorrect !'
-            ], 401);
+        if ($result === null) {
+            return $this->errorResponse('Invalid credentials.', 401);
         }
 
-        $token = $user->createToken('auth-token')->plainTextToken;
-        return response()->json([
-            'status' => 'Success',
-            'message' => 'Logged In Successfully',
-            'data' => [
-                'user' => UserResource::make($user),
-                'token' => $token
-            ]
-        ], 200);
+        return $this->successResponse([
+            'user' => UserResource::make($result['user'])->resolve(),
+            'token' => $result['token'],
+        ], 'Logged in successfully.');
     }
 
     public function logout(Request $request)
     {
-        Auth::user()->tokens()->delete();
-        return response()->json([
-            'status' => 'Success',
-            'message' => 'Logged Out Successfully',
+        $this->authService->logout($request->user());
 
-        ], 200);
+        return $this->successResponse(message: 'Logged out successfully.');
     }
 }

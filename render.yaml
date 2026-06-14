@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: multi-tenant-inventory-api
+    runtime: php
+    plan: free
+    buildCommand: chmod +x render-build.sh && ./render-build.sh
+    preDeployCommand: chmod +x render-deploy.sh && ./render-deploy.sh
+    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    healthCheckPath: /up
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_NAME
+        value: Multi-Tenant Inventory
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_URL
+        sync: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: SESSION_DRIVER
+        value: cookie
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_URL
+        fromDatabase:
+          name: multi-tenant-inventory-db
+          property: connectionString
+      - key: SEED_DEMO_DATA
+        value: true
+
+databases:
+  - name: multi-tenant-inventory-db
+    plan: free
+    databaseName: inventory
+    user: inventory

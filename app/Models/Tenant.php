@@ -12,7 +12,7 @@ class Tenant extends Model
     protected $fillable = [
         'name',
         'address',
-        'description'
+        'description',
     ];
 
     public function users()

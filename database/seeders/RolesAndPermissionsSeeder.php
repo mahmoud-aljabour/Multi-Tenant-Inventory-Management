@@ -2,39 +2,33 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         setPermissionsTeamId(null);
-        $view_products = Permission::create(['name' => 'view products']);
-        $create_products = Permission::create(['name' => 'create products']);
-        $manage_inventory = Permission::create(['name' => 'manage inventory']);
-        $manage_users = Permission::create(['name' => 'manage users']);
 
-        $viewer = Role::create(['name' => 'viewer']);
-        $viewer->givePermissionTo($view_products);
+        $viewProducts = Permission::firstOrCreate(['name' => 'view products']);
+        $createProducts = Permission::firstOrCreate(['name' => 'create products']);
+        $manageInventory = Permission::firstOrCreate(['name' => 'manage inventory']);
+        $manageUsers = Permission::firstOrCreate(['name' => 'manage users']);
 
-        $operator = Role::create(['name' => 'operator']);
-        $operator->givePermissionTo([
-            $view_products,
-            $manage_inventory
-        ]);
+        $viewer = Role::firstOrCreate(['name' => 'viewer']);
+        $viewer->syncPermissions([$viewProducts]);
 
-        $manager = Role::create(['name' => 'warehouse_manager']);
-        $manager->givePermissionTo([
-            $view_products,
-            $create_products,
-            $manage_inventory,
-            $manage_users
+        $operator = Role::firstOrCreate(['name' => 'operator']);
+        $operator->syncPermissions([$viewProducts, $manageInventory]);
+
+        $manager = Role::firstOrCreate(['name' => 'warehouse_manager']);
+        $manager->syncPermissions([
+            $viewProducts,
+            $createProducts,
+            $manageInventory,
+            $manageUsers,
         ]);
     }
 }

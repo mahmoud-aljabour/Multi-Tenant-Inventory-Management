@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTenantRequest;
 use App\Http\Resources\TenantResource;
 use App\Models\Tenant;
-use Illuminate\Http\Request;
 
 class TenantController extends Controller
 {
